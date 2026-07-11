@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 const tiers = [
   {
     name: "Solo",
-    price: "$0",
+    price: "0 DZD",
     period: "forever",
     tagline: "For freelancers running one or two clients.",
     features: ["1 client", "3 active projects", "Kanban & list views", "File uploads"],
@@ -14,7 +14,7 @@ const tiers = [
   },
   {
     name: "Team",
-    price: "$24",
+    price: "2,900 DZD",
     period: "/mo",
     tagline: "For small agencies with a team to coordinate.",
     features: [
@@ -27,7 +27,7 @@ const tiers = [
   },
   {
     name: "Agency",
-    price: "$59",
+    price: "6,900 DZD",
     period: "/mo",
     tagline: "For agencies ready to bring clients into the loop.",
     features: [
@@ -42,56 +42,53 @@ const tiers = [
 
 export function Pricing() {
   return (
-    <section id="pricing" className="mx-auto max-w-6xl px-6 py-24">
+    <section id="pricing" className="mx-auto max-w-6xl px-6 py-28">
       <div className="mx-auto max-w-xl text-center">
-        <h2 className="font-display text-3xl font-extrabold tracking-tight">
+        <p className="font-mono text-xs uppercase tracking-widest text-moss">Pricing</p>
+        <h2 className="mt-4 font-display text-3xl italic text-ink">
           Simple pricing, no surprises
         </h2>
         <p className="mt-3 text-muted">Start free. Upgrade when the team does.</p>
       </div>
-      <div className="mt-12 grid gap-6 md:grid-cols-3">
+      <div className="mt-14 grid gap-6 md:grid-cols-3">
         {tiers.map((tier) => (
           <div
             key={tier.name}
-            className={`relative rounded-3xl border p-6 ${
+            className={`relative rounded-2xl border p-7 ${
               tier.highlighted
-                ? "border-primary bg-ink text-white shadow-xl shadow-primary/20"
-                : "border-border bg-white"
+                ? "border-ink bg-ink text-paper"
+                : "border-border bg-paper-dim/40"
             }`}
           >
             {tier.highlighted && (
-              <span className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white">
+              <span className="absolute -top-3 left-6 rounded-full bg-gold px-3 py-1 text-xs font-semibold text-ink">
                 Most popular
               </span>
             )}
-            <h3 className="font-display text-lg font-bold">{tier.name}</h3>
-            <p className={`mt-1 text-sm ${tier.highlighted ? "text-white/60" : "text-muted"}`}>
+            <h3 className="font-display text-lg italic">{tier.name}</h3>
+            <p className={`mt-1 text-sm ${tier.highlighted ? "text-paper/60" : "text-muted"}`}>
               {tier.tagline}
             </p>
-            <div className="mt-5 flex items-baseline gap-1">
-              <span className="font-display text-4xl font-extrabold">{tier.price}</span>
-              <span className={tier.highlighted ? "text-white/50" : "text-muted"}>
+            <div className="mt-6 flex items-baseline gap-1">
+              <span className="font-display text-3xl">{tier.price}</span>
+              <span className={tier.highlighted ? "text-paper/50" : "text-muted"}>
                 {tier.period}
               </span>
             </div>
             <ul className="mt-6 flex flex-col gap-2.5">
               {tier.features.map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm">
-                  <Check
-                    className={`mt-0.5 h-4 w-4 shrink-0 ${
-                      tier.highlighted ? "text-primary" : "text-primary"
-                    }`}
-                  />
-                  <span className={tier.highlighted ? "text-white/80" : "text-muted"}>{f}</span>
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                  <span className={tier.highlighted ? "text-paper/80" : "text-muted"}>{f}</span>
                 </li>
               ))}
             </ul>
-            <SignUpButton mode="modal">
+            <SignUpButton mode="modal" forceRedirectUrl="/dashboard">
               <button
                 className={`mt-7 w-full rounded-full px-5 py-2.5 text-sm font-semibold transition ${
                   tier.highlighted
-                    ? "bg-white text-ink hover:bg-surface-soft"
-                    : "bg-primary text-white hover:bg-primary-dark"
+                    ? "bg-paper text-ink hover:bg-paper-dim"
+                    : "bg-ink text-paper hover:bg-moss-dark"
                 }`}
               >
                 Get started

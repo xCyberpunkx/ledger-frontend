@@ -6,14 +6,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#14121F",
-        muted: "#65627A",
-        surface: "#FFFFFF",
-        "surface-soft": "#F8F7FC",
-        border: "#E7E4F3",
-        primary: "#6D5EF8",
-        "primary-dark": "#5645E0",
-        pink: "#FF6B9C",
+        ink: "#1C1A17",
+        paper: "#F6F2E9",
+        "paper-dim": "#EDE6D3",
+        moss: "#3F5B4E",
+        "moss-dark": "#2C4239",
+        gold: "#B98B3E",
+        muted: "#726B5E",
+        border: "#E1D8C2",
       },
       fontFamily: {
         display: ["var(--font-display)"],

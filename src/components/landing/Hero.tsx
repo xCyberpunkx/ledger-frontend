@@ -1,40 +1,91 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { SignUpButton } from "@clerk/nextjs";
 import { ArrowRight } from "lucide-react";
+import { gsap } from "@/lib/gsap";
 
 export function Hero() {
-  return (
-    <section className="relative px-6 pb-10 pt-20">
-      <div className="pointer-events-none absolute left-1/2 top-0 h-[560px] w-[900px] -translate-x-1/2 rounded-full bg-primary/20 blur-[110px]" />
-      <div className="pointer-events-none absolute right-0 top-40 h-[360px] w-[360px] rounded-full bg-pink/25 blur-[100px]" />
+  const rootRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<SVGPathElement>(null);
 
-      <div className="relative mx-auto max-w-3xl text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-soft px-4 py-1.5 text-xs font-semibold text-primary">
-          Built for freelancers &amp; small agencies
+  useEffect(() => {
+    // gsap.context() scopes selectors + auto-cleans on unmount — the React
+    // way to use GSAP without animations leaking into a page you navigated
+    // away from.
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      tl.from(".hero-eyebrow", { opacity: 0, y: 12, duration: 0.5 })
+        .from(
+          ".hero-line",
+          { opacity: 0, y: 28, duration: 0.7, stagger: 0.12 },
+          "-=0.2",
+        )
+        .from(".hero-sub", { opacity: 0, y: 16, duration: 0.6 }, "-=0.3")
+        .from(".hero-cta", { opacity: 0, y: 12, duration: 0.5 }, "-=0.35");
+
+      // The line "draws" itself: start with the full stroke hidden via
+      // dashoffset, animate it back to 0. No plugin needed, just SVG's
+      // own stroke-dasharray/-dashoffset mechanics.
+      if (lineRef.current) {
+        const length = lineRef.current.getTotalLength();
+        gsap.set(lineRef.current, { strokeDasharray: length, strokeDashoffset: length });
+        tl.to(lineRef.current, { strokeDashoffset: 0, duration: 1.1, ease: "power2.inOut" }, "-=0.4");
+      }
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section ref={rootRef} className="relative px-6 pb-16 pt-24">
+      <div className="mx-auto max-w-3xl text-center">
+        <span className="hero-eyebrow inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 font-mono text-xs uppercase tracking-widest text-moss">
+          For freelancers &amp; small agencies
         </span>
-        <h1 className="mt-6 font-display text-5xl font-extrabold leading-[1.05] tracking-tight md:text-6xl">
-          One true status for every client project.
+
+        <h1 className="mt-7 font-display text-5xl italic leading-[1.08] tracking-tight text-ink md:text-6xl">
+          <span className="hero-line block not-italic font-medium">
+            One true status
+          </span>
+          <span className="hero-line block">for every client project.</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted">
-          Stop relaying updates through WhatsApp, email threads, and spreadsheets that all
-          disagree. Ledger centralizes the work and shows the right slice to the right
-          person, automatically.
+
+        <p className="hero-sub mx-auto mt-7 max-w-lg text-lg leading-relaxed text-muted">
+          Stop relaying updates through WhatsApp, email threads, and spreadsheets
+          that all disagree. Ledger centralizes the work and shows the right
+          slice to the right person, automatically.
         </p>
-        <div className="mt-9 flex items-center justify-center gap-4">
-          <SignUpButton mode="modal">
-            <button className="flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/30 transition hover:bg-primary-dark">
+
+        <div className="hero-cta mt-9 flex items-center justify-center gap-4">
+          <SignUpButton mode="modal" forceRedirectUrl="/dashboard">
+            <button className="flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-paper transition hover:bg-moss-dark">
               Get started free <ArrowRight className="h-4 w-4" />
             </button>
           </SignUpButton>
           <a
-            href="#personas"
-            className="rounded-full border border-border px-6 py-3 text-sm font-semibold text-ink transition hover:bg-surface-soft"
+            href="#features"
+            className="rounded-full border border-border px-6 py-3 text-sm font-semibold text-ink transition hover:bg-paper-dim"
           >
             See how it works
           </a>
         </div>
       </div>
+
+      <svg
+        viewBox="0 0 1200 80"
+        className="mx-auto mt-14 w-full max-w-4xl"
+        fill="none"
+      >
+        <path
+          ref={lineRef}
+          d="M0 40 C 150 10, 300 70, 450 40 S 750 10, 900 40 S 1100 70, 1200 40"
+          stroke="#3F5B4E"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
     </section>
   );
 }
