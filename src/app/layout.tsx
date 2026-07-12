@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Providers } from "@/components/providers";
 import "./globals.css";
 
 // next/font/google self-hosts at build time — no runtime request, no
 // layout shift. Fraunces is an editorial serif with real personality for
 // headlines; Inter carries body copy and UI text where legibility matters
-// more than character.
+// more than character. IBM Plex Mono covers eyebrows, labels, and any
+// code-adjacent UI (org slugs, IDs) — a real typeface choice instead of
+// falling back to the system mono stack, which read as an afterthought.
 const display = Fraunces({
   subsets: ["latin"],
   weight: ["500", "600"],
@@ -16,6 +19,11 @@ const display = Fraunces({
 const body = Inter({
   subsets: ["latin"],
   variable: "--font-body",
+});
+const mono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["500"],
+  variable: "--font-mono",
 });
 
 // This file has no "use client" directive, so it's a Server Component —
@@ -45,9 +53,9 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${display.variable} ${body.variable}`}>
+      <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
         <body className="min-h-screen bg-paper font-body text-ink antialiased">
-          {children}
+          <Providers>{children}</Providers>
         </body>
       </html>
     </ClerkProvider>

@@ -5,9 +5,12 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 // of a marketing site, it has to be visible before anyone has an account.
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/org(.*)"]);
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
+  // Clerk v6 made auth() return a Promise (it now does a token refresh
+  // check under the hood) — calling .protect() on the promise directly,
+  // as v5 code did, is a no-op that silently lets every request through.
   if (isProtectedRoute(req)) {
-    auth().protect();
+    await auth.protect();
   }
 });
 
