@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
 import { Plus, Building2, ArrowRight } from "lucide-react";
@@ -33,7 +34,8 @@ function OrgRowSkeleton() {
 export default function DashboardPage() {
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
-  const [creating, setCreating] = useState(false);
+  const searchParams = useSearchParams();
+  const [creating, setCreating] = useState(searchParams.get("create") === "1");
   const [name, setName] = useState("");
 
   const {
@@ -70,7 +72,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-16">
+    <main className="mx-auto max-w-4xl px-6 py-16">
       <div className="flex items-center justify-between">
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-moss">Dashboard</p>

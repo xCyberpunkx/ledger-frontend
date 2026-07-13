@@ -1,9 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// Everything under /dashboard or /org requires a signed-in user.
-// The landing page, sign-in, and sign-up stay public — that's the point
-// of a marketing site, it has to be visible before anyone has an account.
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/org(.*)"]);
+// Everything under /dashboard requires a signed-in user. The landing
+// page, sign-in, and sign-up stay public — that's the point of a
+// marketing site, it has to be visible before anyone has an account.
+const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
   // Clerk v6 made auth() return a Promise (it now does a token refresh
