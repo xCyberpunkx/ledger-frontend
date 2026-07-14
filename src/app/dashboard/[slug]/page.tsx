@@ -4,6 +4,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
 import { FolderKanban } from "lucide-react";
+import { InvitePanel } from "@/components/dashboard/InvitePanel";
 
 type Organization = {
   id: string;
@@ -86,6 +87,10 @@ export default function OrgPage({ params }: { params: { slug: string } }) {
           haven&apos;t been built yet.
         </p>
       </div>
+
+      {(role === "OWNER" || role === "ADMIN") && (
+        <InvitePanel organizationId={org.id} />
+      )}
     </div>
   );
 }
