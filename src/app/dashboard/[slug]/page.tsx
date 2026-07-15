@@ -3,8 +3,9 @@
 import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
-import { FolderKanban } from "lucide-react";
 import { InvitePanel } from "@/components/dashboard/InvitePanel";
+import { ClientsPanel } from "@/components/dashboard/ClientsPanel";
+import { ProjectsPanel } from "@/components/dashboard/ProjectsPanel";
 
 type Organization = {
   id: string;
@@ -67,6 +68,7 @@ export default function OrgPage({ params }: { params: { slug: string } }) {
   }
 
   const role = org.memberships[0]?.role;
+  const isAdmin = role === "OWNER" || role === "ADMIN";
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
@@ -78,19 +80,9 @@ export default function OrgPage({ params }: { params: { slug: string } }) {
       </div>
       <p className="mt-1 font-mono text-xs text-muted">{org.slug}</p>
 
-      <div className="mt-10 rounded-2xl border border-dashed border-border p-10 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-moss/10">
-          <FolderKanban className="h-6 w-6 text-moss" />
-        </div>
-        <p className="mt-4 text-sm leading-relaxed text-muted">
-          Projects will live here. That&apos;s V2 — clients and projects
-          haven&apos;t been built yet.
-        </p>
-      </div>
-
-      {(role === "OWNER" || role === "ADMIN") && (
-        <InvitePanel organizationId={org.id} />
-      )}
+      {isAdmin && <ClientsPanel organizationId={org.id} />}
+      <ProjectsPanel organizationId={org.id} isAdmin={isAdmin} />
+      {isAdmin && <InvitePanel organizationId={org.id} />}
     </div>
   );
 }
