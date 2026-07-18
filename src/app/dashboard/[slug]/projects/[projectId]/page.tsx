@@ -9,6 +9,7 @@ import { MilestonesPanel } from "@/components/dashboard/MilestonesPanel";
 import { TasksPanel } from "@/components/dashboard/TasksPanel";
 import { FilesPanel } from "@/components/dashboard/FilesPanel";
 import { CommentsPanel } from "@/components/dashboard/CommentsPanel";
+import { ActivityTimeline } from "@/components/dashboard/ActivityTimeline";
 
 type Organization = {
   id: string;
@@ -125,6 +126,7 @@ export default function ProjectDetailPage({
           a Task or FileAsset later just by passing taskId/fileAssetId
           instead, no changes needed to CommentsPanel itself. */}
       <CommentsPanel organizationId={org.id} projectId={project.id} />
+      <ActivityTimeline organizationId={org.id} projectId={project.id} />
     </div>
   );
 }
