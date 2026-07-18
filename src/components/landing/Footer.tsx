@@ -13,10 +13,10 @@ const columns = [
     ],
   },
   {
-    heading: "Developers",
+    heading: "Codebases",
     links: [
-      { label: "GitHub", href: "https://github.com", external: true },
-      { label: "API reference", href: "/#developers" },
+      { label: "Frontend UI", href: "https://github.com/xCyberpunkx/ledger-frontend", external: true },
+      { label: "Backend API", href: "https://github.com/xCyberpunkx/ledger-backend", external: true },
       { label: "FAQ", href: "/#faq" },
     ],
   },
@@ -49,15 +49,17 @@ export function Footer() {
             <p className="mt-3 max-w-[20ch] text-sm leading-relaxed text-muted">
               One true status for every client project.
             </p>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Ledger on GitHub"
-              className={`mt-4 inline-flex text-muted hover:text-ink ${focusRing}`}
-            >
-              <Github className="h-4 w-4" />
-            </a>
+            <div className="mt-4 flex gap-3">
+              <a
+                href="https://github.com/xCyberpunkx/ledger-frontend"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Ledger Frontend on GitHub"
+                className={`text-muted hover:text-ink ${focusRing}`}
+              >
+                <Github className="h-4 w-4" />
+              </a>
+            </div>
           </div>
 
           {columns.map((col) => (
@@ -91,7 +93,18 @@ export function Footer() {
 
         <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted">
           <span>&copy; {new Date().getFullYear()} Ledger. MIT licensed.</span>
-          <span>Built by Zine Eddine.</span>
+          <span>
+            Built by{" "}
+            <a
+              href="https://zineddine.vercel.app/"
+              target="_blank"
+              rel="noreferrer"
+              className={`font-medium text-ink underline underline-offset-4 hover:text-moss ${focusRing}`}
+            >
+              Zine Eddine
+            </a>
+            .
+          </span>
         </div>
       </div>
     </footer>

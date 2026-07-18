@@ -75,10 +75,10 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <a
-            href="https://github.com"
+            href="https://github.com/xCyberpunkx/ledger-frontend"
             target="_blank"
             rel="noreferrer"
-            aria-label="Ledger on GitHub"
+            aria-label="Ledger Frontend on GitHub"
             className={`text-muted hover:text-ink ${focusRing}`}
           >
             <Github className="h-4 w-4" />

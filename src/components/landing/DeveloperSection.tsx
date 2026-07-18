@@ -61,21 +61,23 @@ export function DeveloperSection() {
 
           <div className="mt-9 flex flex-wrap gap-3">
             <a
-              href="https://github.com"
+              href="https://github.com/xCyberpunkx/ledger-frontend"
               target="_blank"
               rel="noreferrer"
               className={`flex items-center gap-2 rounded-full bg-paper px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-paper-dim ${focusRing}`}
             >
-              <Github className="h-4 w-4" /> View on GitHub
+              <Github className="h-4 w-4" /> Frontend Repo
             </a>
             <a
-              href="#roadmap"
-              className={`flex items-center gap-2 rounded-full border border-paper/20 px-5 py-2.5 text-sm font-semibold text-paper/80 transition hover:bg-paper/5 ${focusRing}`}
+              href="https://github.com/xCyberpunkx/ledger-backend"
+              target="_blank"
+              rel="noreferrer"
+              className={`flex items-center gap-2 rounded-full bg-paper px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-paper-dim ${focusRing}`}
             >
-              <ScrollText className="h-4 w-4" /> Roadmap
+              <Github className="h-4 w-4" /> Backend Repo
             </a>
             <a
-              href="https://github.com"
+              href="https://github.com/xCyberpunkx/ledger-backend"
               target="_blank"
               rel="noreferrer"
               className={`flex items-center gap-2 rounded-full border border-paper/20 px-5 py-2.5 text-sm font-semibold text-paper/80 transition hover:bg-paper/5 ${focusRing}`}
