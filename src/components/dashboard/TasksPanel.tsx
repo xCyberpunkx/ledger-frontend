@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch, ApiError } from "@/lib/api";
-import { ListTodo, Plus, Pencil, Trash2, Check } from "lucide-react";
+import { ListTodo, Plus, Pencil, Trash2, Check, LayoutGrid, List } from "lucide-react";
+import { KanbanBoard } from "@/components/dashboard/KanbanBoard";
 
 type TaskStatus = "TODO" | "IN_PROGRESS" | "IN_REVIEW" | "DONE";
 type TaskPriority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
@@ -75,6 +76,11 @@ export function TasksPanel({
   const [filterStatus, setFilterStatus] = useState<TaskStatus | "">("");
   const [filterPriority, setFilterPriority] = useState<TaskPriority | "">("");
   const [filterAssigneeId, setFilterAssigneeId] = useState("");
+
+  // List view is the source of truth for editing/deleting; the kanban
+  // board's card actions just flip back here with the right task already
+  // selected, rather than duplicating the edit form in two layouts.
+  const [view, setView] = useState<"list" | "board">("list");
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: ["tasks", projectId] });
@@ -206,14 +212,36 @@ export function TasksPanel({
           <ListTodo className="h-4 w-4 text-moss" />
           <h2 className="text-sm font-semibold text-ink">Tasks</h2>
         </div>
-        {!creating && (
-          <button
-            onClick={() => setCreating(true)}
-            className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-paper transition hover:bg-moss-dark"
-          >
-            <Plus className="h-3.5 w-3.5" /> New task
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          <div className="flex rounded-full border border-border p-0.5">
+            <button
+              onClick={() => setView("list")}
+              aria-label="List view"
+              className={`rounded-full p-1.5 transition ${
+                view === "list" ? "bg-ink text-paper" : "text-muted hover:text-ink"
+              }`}
+            >
+              <List className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setView("board")}
+              aria-label="Board view"
+              className={`rounded-full p-1.5 transition ${
+                view === "board" ? "bg-ink text-paper" : "text-muted hover:text-ink"
+              }`}
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          {!creating && (
+            <button
+              onClick={() => setCreating(true)}
+              className="flex items-center gap-1.5 rounded-full bg-ink px-3 py-1.5 text-xs font-semibold text-paper transition hover:bg-moss-dark"
+            >
+              <Plus className="h-3.5 w-3.5" /> New task
+            </button>
+          )}
+        </div>
       </div>
 
       {/* TASK-03 filters */}
@@ -333,166 +361,187 @@ export function TasksPanel({
         </form>
       )}
 
-      <div className="mt-4 flex flex-col gap-2">
-        {isPending && (
-          <>
-            <div className="h-12 animate-pulse rounded-lg bg-paper-dim" />
-            <div className="h-12 animate-pulse rounded-lg bg-paper-dim" />
-          </>
-        )}
-        {tasks?.length === 0 && !isPending && (
-          <p className="text-xs text-muted">No tasks match these filters.</p>
-        )}
-        {tasks?.map((t) => {
-          if (editingId === t.id) {
-            return (
-              <form
-                key={t.id}
-                onSubmit={(e) => handleEditSubmit(e, t.id)}
-                className="flex flex-col gap-2 rounded-lg border border-moss/30 bg-moss/[0.04] p-3"
-              >
-                <input
-                  autoFocus
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  className="rounded-lg border border-border px-3 py-1.5 text-xs text-ink outline-none focus:border-moss"
-                />
-                <div className="flex gap-2">
+      {view === "board" ? (
+        isPending ? (
+          <p className="mt-4 text-xs text-muted">Loading…</p>
+        ) : (
+          <KanbanBoard
+            tasks={tasks ?? []}
+            onStatusChange={(taskId, status) =>
+              updateTask.mutate({ taskId, body: { status } })
+            }
+            onEdit={(t) => {
+              setView("list");
+              startEdit(t);
+            }}
+            onDelete={(id) => {
+              setView("list");
+              setConfirmingDeleteId(id);
+            }}
+          />
+        )
+      ) : (
+        <div className="mt-4 flex flex-col gap-2">
+          {isPending && (
+            <>
+              <div className="h-12 animate-pulse rounded-lg bg-paper-dim" />
+              <div className="h-12 animate-pulse rounded-lg bg-paper-dim" />
+            </>
+          )}
+          {tasks?.length === 0 && !isPending && (
+            <p className="text-xs text-muted">No tasks match these filters.</p>
+          )}
+          {tasks?.map((t) => {
+            if (editingId === t.id) {
+              return (
+                <form
+                  key={t.id}
+                  onSubmit={(e) => handleEditSubmit(e, t.id)}
+                  className="flex flex-col gap-2 rounded-lg border border-moss/30 bg-moss/[0.04] p-3"
+                >
+                  <input
+                    autoFocus
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    className="rounded-lg border border-border px-3 py-1.5 text-xs text-ink outline-none focus:border-moss"
+                  />
+                  <div className="flex gap-2">
+                    <select
+                      value={editPriority}
+                      onChange={(e) => setEditPriority(e.target.value as TaskPriority)}
+                      className="flex-1 rounded-lg border border-border bg-white px-3 py-1.5 text-xs text-ink outline-none focus:border-moss"
+                    >
+                      {PRIORITIES.map((p) => (
+                        <option key={p} value={p}>
+                          {p}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      type="date"
+                      value={editDueDate}
+                      onChange={(e) => setEditDueDate(e.target.value)}
+                      className="flex-1 rounded-lg border border-border px-3 py-1.5 text-xs text-ink outline-none focus:border-moss"
+                    />
+                  </div>
                   <select
-                    value={editPriority}
-                    onChange={(e) => setEditPriority(e.target.value as TaskPriority)}
-                    className="flex-1 rounded-lg border border-border bg-white px-3 py-1.5 text-xs text-ink outline-none focus:border-moss"
+                    value={editAssigneeId}
+                    onChange={(e) => setEditAssigneeId(e.target.value)}
+                    className="rounded-lg border border-border bg-white px-3 py-1.5 text-xs text-ink outline-none focus:border-moss"
                   >
-                    {PRIORITIES.map((p) => (
-                      <option key={p} value={p}>
-                        {p}
+                    <option value="">Unassigned</option>
+                    {members?.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.user.name}
                       </option>
                     ))}
                   </select>
-                  <input
-                    type="date"
-                    value={editDueDate}
-                    onChange={(e) => setEditDueDate(e.target.value)}
-                    className="flex-1 rounded-lg border border-border px-3 py-1.5 text-xs text-ink outline-none focus:border-moss"
-                  />
-                </div>
-                <select
-                  value={editAssigneeId}
-                  onChange={(e) => setEditAssigneeId(e.target.value)}
-                  className="rounded-lg border border-border bg-white px-3 py-1.5 text-xs text-ink outline-none focus:border-moss"
-                >
-                  <option value="">Unassigned</option>
-                  {members?.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.user.name}
-                    </option>
-                  ))}
-                </select>
-                {errorMsg && <p className="text-xs text-gold">{errorMsg}</p>}
-                <div className="flex gap-2">
-                  <button
-                    type="submit"
-                    disabled={updateTask.isPending}
-                    className="flex items-center gap-1 rounded-full bg-ink px-3 py-1 text-xs font-semibold text-paper hover:bg-moss-dark"
-                  >
-                    <Check className="h-3 w-3" /> Save
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditingId(null)}
-                    className="rounded-full px-3 py-1 text-xs font-semibold text-muted hover:bg-paper-dim"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            );
-          }
+                  {errorMsg && <p className="text-xs text-gold">{errorMsg}</p>}
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      disabled={updateTask.isPending}
+                      className="flex items-center gap-1 rounded-full bg-ink px-3 py-1 text-xs font-semibold text-paper hover:bg-moss-dark"
+                    >
+                      <Check className="h-3 w-3" /> Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingId(null)}
+                      className="rounded-full px-3 py-1 text-xs font-semibold text-muted hover:bg-paper-dim"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              );
+            }
 
-          if (confirmingDeleteId === t.id) {
+            if (confirmingDeleteId === t.id) {
+              return (
+                <div
+                  key={t.id}
+                  className="flex items-center justify-between rounded-lg border border-gold/30 bg-gold/[0.06] px-3 py-2 text-xs"
+                >
+                  <span className="text-ink">Delete {t.title}?</span>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => deleteTask.mutate(t.id)}
+                      disabled={deleteTask.isPending}
+                      className="font-semibold text-gold hover:underline"
+                    >
+                      {deleteTask.isPending ? "Deleting…" : "Yes, delete"}
+                    </button>
+                    <button
+                      onClick={() => setConfirmingDeleteId(null)}
+                      className="text-muted hover:underline"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <div
                 key={t.id}
-                className="flex items-center justify-between rounded-lg border border-gold/30 bg-gold/[0.06] px-3 py-2 text-xs"
+                className="group flex items-center justify-between rounded-lg bg-paper-dim/60 px-3 py-2.5 text-xs"
               >
-                <span className="text-ink">Delete {t.title}?</span>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => deleteTask.mutate(t.id)}
-                    disabled={deleteTask.isPending}
-                    className="font-semibold text-gold hover:underline"
+                <div className="flex items-center gap-3">
+                  <span className="font-medium text-ink">{t.title}</span>
+                  <span className={PRIORITY_TONE[t.priority]}>{t.priority}</span>
+                  {t.assignee && (
+                    <span className="text-muted">{t.assignee.user.name}</span>
+                  )}
+                  {t.dueDate && (
+                    <span className="text-muted">
+                      {new Date(t.dueDate).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  {/* Same PATCH endpoint the kanban board calls on drag —
+                      this dropdown is the list-view equivalent of dragging
+                      a card to a new column. */}
+                  <select
+                    value={t.status}
+                    onChange={(e) =>
+                      updateTask.mutate({
+                        taskId: t.id,
+                        body: { status: e.target.value as TaskStatus },
+                      })
+                    }
+                    className="rounded-full border border-border bg-white px-2 py-1 text-[11px] text-ink outline-none focus:border-moss"
                   >
-                    {deleteTask.isPending ? "Deleting…" : "Yes, delete"}
-                  </button>
-                  <button
-                    onClick={() => setConfirmingDeleteId(null)}
-                    className="text-muted hover:underline"
-                  >
-                    Cancel
-                  </button>
+                    {STATUSES.map((s) => (
+                      <option key={s} value={s}>
+                        {STATUS_LABEL[s]}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex items-center gap-2 opacity-0 transition group-hover:opacity-100">
+                    <button
+                      onClick={() => startEdit(t)}
+                      aria-label="Edit task"
+                      className="text-muted hover:text-ink"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => setConfirmingDeleteId(t.id)}
+                      aria-label="Delete task"
+                      className="text-muted hover:text-gold"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             );
-          }
-
-          return (
-            <div
-              key={t.id}
-              className="group flex items-center justify-between rounded-lg bg-paper-dim/60 px-3 py-2.5 text-xs"
-            >
-              <div className="flex items-center gap-3">
-                <span className="font-medium text-ink">{t.title}</span>
-                <span className={PRIORITY_TONE[t.priority]}>{t.priority}</span>
-                {t.assignee && (
-                  <span className="text-muted">{t.assignee.user.name}</span>
-                )}
-                {t.dueDate && (
-                  <span className="text-muted">
-                    {new Date(t.dueDate).toLocaleDateString()}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-3">
-                {/* Same PATCH endpoint a kanban drag-drop will call next
-                    pass — this dropdown is the list-view equivalent of
-                    dragging a card to a new column. */}
-                <select
-                  value={t.status}
-                  onChange={(e) =>
-                    updateTask.mutate({
-                      taskId: t.id,
-                      body: { status: e.target.value as TaskStatus },
-                    })
-                  }
-                  className="rounded-full border border-border bg-white px-2 py-1 text-[11px] text-ink outline-none focus:border-moss"
-                >
-                  {STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {STATUS_LABEL[s]}
-                    </option>
-                  ))}
-                </select>
-                <div className="flex items-center gap-2 opacity-0 transition group-hover:opacity-100">
-                  <button
-                    onClick={() => startEdit(t)}
-                    aria-label="Edit task"
-                    className="text-muted hover:text-ink"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={() => setConfirmingDeleteId(t.id)}
-                    aria-label="Delete task"
-                    className="text-muted hover:text-gold"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+          })}
+        </div>
+      )}
     </div>
   );
 }
