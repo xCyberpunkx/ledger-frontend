@@ -11,7 +11,7 @@ export function CtaBanner() {
           Run client work like it&apos;s written down once.
         </h2>
         <SignUpButton mode="modal" forceRedirectUrl="/dashboard">
-          <button className="mx-auto mt-8 flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-paper transition hover:bg-moss-dark">
+          <button className="mx-auto mt-8 flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-paper transition hover:bg-moss-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-paper">
             Get started free <ArrowRight className="h-4 w-4" />
           </button>
         </SignUpButton>

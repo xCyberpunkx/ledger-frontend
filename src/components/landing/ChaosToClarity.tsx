@@ -16,6 +16,9 @@ export function ChaosToClarity() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,

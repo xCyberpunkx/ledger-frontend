@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -32,6 +32,29 @@ function OrgRowSkeleton() {
 }
 
 export default function DashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="mx-auto max-w-4xl px-6 py-16">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-widest text-moss">Dashboard</p>
+              <h1 className="mt-1 font-display text-display-sm text-ink">Your organizations</h1>
+            </div>
+          </div>
+          <div className="mt-6 flex flex-col gap-3">
+            <OrgRowSkeleton />
+            <OrgRowSkeleton />
+          </div>
+        </main>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+function DashboardContent() {
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();

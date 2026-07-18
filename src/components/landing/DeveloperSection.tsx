@@ -11,11 +11,17 @@ const stack = [
   "Clerk", "Cloudinary", "Resend", "Sentry",
 ];
 
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ink";
+
 export function DeveloperSection() {
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+
       gsap.from(".stack-pill", {
         opacity: 0,
         y: 12,
@@ -58,13 +64,13 @@ export function DeveloperSection() {
               href="https://github.com"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 rounded-full bg-paper px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-paper-dim"
+              className={`flex items-center gap-2 rounded-full bg-paper px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-paper-dim ${focusRing}`}
             >
               <Github className="h-4 w-4" /> View on GitHub
             </a>
             <a
               href="#roadmap"
-              className="flex items-center gap-2 rounded-full border border-paper/20 px-5 py-2.5 text-sm font-semibold text-paper/80 transition hover:bg-paper/5"
+              className={`flex items-center gap-2 rounded-full border border-paper/20 px-5 py-2.5 text-sm font-semibold text-paper/80 transition hover:bg-paper/5 ${focusRing}`}
             >
               <ScrollText className="h-4 w-4" /> Roadmap
             </a>
@@ -72,7 +78,7 @@ export function DeveloperSection() {
               href="https://github.com"
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-2 rounded-full border border-paper/20 px-5 py-2.5 text-sm font-semibold text-paper/80 transition hover:bg-paper/5"
+              className={`flex items-center gap-2 rounded-full border border-paper/20 px-5 py-2.5 text-sm font-semibold text-paper/80 transition hover:bg-paper/5 ${focusRing}`}
             >
               <GitPullRequest className="h-4 w-4" /> Contribute
             </a>

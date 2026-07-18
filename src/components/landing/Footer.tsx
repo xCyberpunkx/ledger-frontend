@@ -36,6 +36,9 @@ const columns = [
   },
 ];
 
+const focusRing =
+  "rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-paper";
+
 export function Footer() {
   return (
     <footer className="border-t border-border px-6 py-16">
@@ -51,7 +54,7 @@ export function Footer() {
               target="_blank"
               rel="noreferrer"
               aria-label="Ledger on GitHub"
-              className="mt-4 inline-flex text-muted hover:text-ink"
+              className={`mt-4 inline-flex text-muted hover:text-ink ${focusRing}`}
             >
               <Github className="h-4 w-4" />
             </a>
@@ -68,14 +71,14 @@ export function Footer() {
                         href={l.href}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-sm text-muted hover:text-ink"
+                        className={`text-sm text-muted hover:text-ink ${focusRing}`}
                       >
                         {l.label}
                       </a>
                     </li>
                   ) : (
                     <li key={l.label}>
-                      <Link href={l.href} className="text-sm text-muted hover:text-ink">
+                      <Link href={l.href} className={`text-sm text-muted hover:text-ink ${focusRing}`}>
                         {l.label}
                       </Link>
                     </li>

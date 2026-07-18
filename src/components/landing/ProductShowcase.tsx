@@ -5,8 +5,6 @@ import { CheckCircle2, FileUp, Lock, MessageSquare } from "lucide-react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
 // --- Visual 1: the kanban board -------------------------------------------
-// Real Ledger status columns, not a generic three-box placeholder — the
-// column names and card content match what TASK-02 actually ships.
 function KanbanVisual() {
   const columns = [
     {
@@ -49,9 +47,6 @@ function KanbanVisual() {
 }
 
 // --- Visual 2: the client portal boundary -----------------------------
-// The point isn't "here's a portal," it's "here's exactly where the
-// boundary sits" — so the visual dramatizes what a client can and can't
-// reach, not just a pretty screenshot.
 function PortalVisual() {
   return (
     <div className="showcase-visual overflow-hidden rounded-2xl border border-border bg-white shadow-card">
@@ -82,9 +77,6 @@ function PortalVisual() {
 }
 
 // --- Visual 3: the activity timeline -----------------------------------
-// One append-only stream feeding both the UI and email — the visual shows
-// three different event *types* landing in the same feed, which is the
-// actual architectural point (ActivityEvent, one source, two outputs).
 function TimelineVisual() {
   const events = [
     { icon: CheckCircle2, color: "text-moss", text: "Sana marked \u201cExport final logo files\u201d done", time: "2m ago" },
@@ -138,6 +130,9 @@ export function ProductShowcase() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+
       gsap.utils.toArray<HTMLElement>(".showcase-row").forEach((row) => {
         gsap.from(row.querySelectorAll(".showcase-copy > *"), {
           opacity: 0,
@@ -157,8 +152,6 @@ export function ProductShowcase() {
         });
       });
 
-      // Per-visual detail beats, so each showcase reads as its own small
-      // moment rather than a static screenshot with a fade-in.
       gsap.from(".kanban-card", {
         opacity: 0,
         y: 10,

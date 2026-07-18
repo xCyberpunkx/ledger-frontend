@@ -6,14 +6,14 @@ import { ArrowRight, Github } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { AppPreview } from "./AppPreview";
 
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-paper";
+
 export function Hero() {
   const rootRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // gsap.context() scopes selectors + auto-cleans on unmount — the React
-    // way to use GSAP without animations leaking into a page you navigated
-    // away from.
     const ctx = gsap.context(() => {
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reduceMotion) return;
@@ -35,9 +35,9 @@ export function Hero() {
           "-=0.3",
         );
 
-      // Subtle depth: the preview tilts a few degrees toward the cursor.
-      // Small enough to read as "alive," not a gimmick — capped rotation
-      // and eased back to rest on leave.
+      // Cursor-tilt is its own motion effect (not part of the timeline
+      // above) — needs the same reduced-motion guard, which this had been
+      // missing even though the guard above covers the entrance sequence.
       const preview = previewRef.current;
       if (preview) {
         const handleMove = (e: MouseEvent) => {
@@ -69,7 +69,6 @@ export function Hero() {
 
   return (
     <section ref={rootRef} className="relative overflow-hidden px-6 pb-20 pt-24 md:pt-32">
-      {/* ambient warmth behind the preview — a soft radial, not a gradient blob */}
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-1/3 -z-10 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-moss/[0.07] blur-3xl"
@@ -93,13 +92,15 @@ export function Hero() {
 
         <div className="hero-cta mt-9 flex items-center justify-center gap-4">
           <SignUpButton mode="modal" forceRedirectUrl="/dashboard">
-            <button className="flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-paper transition hover:bg-moss-dark">
+            <button
+              className={`flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-paper transition hover:bg-moss-dark ${focusRing}`}
+            >
               Get started free <ArrowRight className="h-4 w-4" />
             </button>
           </SignUpButton>
           <a
             href="#features"
-            className="rounded-full border border-border px-6 py-3 text-sm font-semibold text-ink transition hover:bg-paper-dim"
+            className={`rounded-full border border-border px-6 py-3 text-sm font-semibold text-ink transition hover:bg-paper-dim ${focusRing}`}
           >
             See how it works
           </a>

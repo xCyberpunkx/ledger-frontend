@@ -50,7 +50,7 @@ export function FAQSection() {
               <button
                 onClick={() => setOpen(isOpen ? null : i)}
                 aria-expanded={isOpen}
-                className="flex w-full items-center justify-between gap-4 py-5 text-left"
+                className="flex w-full items-center justify-between gap-4 rounded py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-moss focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
               >
                 <span className="text-sm font-medium text-ink">{item.q}</span>
                 <ChevronDown

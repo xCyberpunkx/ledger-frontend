@@ -37,13 +37,13 @@ export default function PortalHomePage() {
 
       {error && (
         <p className="text-sm text-destructive">
-          Couldn't load your projects. Try refreshing.
+          Couldn&apos;t load your projects. Try refreshing.
         </p>
       )}
 
       {!isLoading && !error && projects?.length === 0 && (
         <p className="text-sm text-muted-foreground">
-          You don't have access to any projects yet.
+          You don&apos;t have access to any projects yet.
         </p>
       )}
 

@@ -23,6 +23,9 @@ export function Personas() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+
       gsap.from(".persona-card", {
         opacity: 0,
         y: 24,

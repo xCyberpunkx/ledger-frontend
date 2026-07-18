@@ -55,6 +55,9 @@ export function FeatureWalkthrough() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+
       gsap.utils.toArray<HTMLElement>(".feature-row").forEach((row) => {
         gsap.from(row, {
           opacity: 0,

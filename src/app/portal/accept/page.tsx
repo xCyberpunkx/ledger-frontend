@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth, SignIn, useUser } from '@clerk/nextjs';
 import { useMutation } from '@tanstack/react-query';
@@ -17,6 +17,14 @@ import { Loader2 } from 'lucide-react';
 // looping back to this exact URL (with the token still in the query
 // string) is what makes that handoff work without a second page.
 export default function AcceptPortalInvitePage() {
+  return (
+    <Suspense fallback={<PortalMessage title="Loading..." message="" icon="spinner" />}>
+      <AcceptPortalInviteContent />
+    </Suspense>
+  );
+}
+
+function AcceptPortalInviteContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { isLoaded, isSignedIn, getToken } = useAuth();

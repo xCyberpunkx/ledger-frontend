@@ -27,6 +27,9 @@ export function SecuritySection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+
       gsap.from(".security-point", {
         opacity: 0,
         y: 20,
@@ -71,7 +74,6 @@ export function SecuritySection() {
           </div>
         </div>
 
-        {/* the "watch it deny access" moment, made concrete */}
         <div className="deny-demo overflow-hidden rounded-2xl border border-border bg-white p-5 font-mono text-xs shadow-card">
           <div className="deny-request rounded-lg bg-paper-dim p-3 text-ink">
             <span className="text-moss">GET</span> /organizations/org_2/members

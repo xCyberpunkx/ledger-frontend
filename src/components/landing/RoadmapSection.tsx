@@ -3,17 +3,26 @@
 import { useEffect, useRef } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 
-// Pulled directly from ROADMAP.md — do not embellish status here without
-// updating that file first; this section is a mirror, not a promise.
+// Pulled from ROADMAP.md and cross-checked against CONTEXT_RESUME.md —
+// this section is a mirror, not a promise, so it needs to say what's
+// actually true, not what the original roadmap draft assumed. V0–V3 are
+// confirmed done (backend + frontend, tested). V4/V5 frontend components
+// (FilesPanel, CommentsPanel, ActivityTimeline) already exist and are
+// wired into the project page, even though the backend application code
+// for those versions isn't confirmed complete — marked in-progress, not
+// shipped, until that's verified. V7 (portal) has a working invite +
+// accept flow as of this session — in-progress, not planned.
+// UPDATE THIS FILE the next time a version's real status changes; don't
+// let it drift back out of sync with what's actually built.
 const milestones = [
   { version: "V0", title: "Foundation", status: "shipped", detail: "Repos, full schema, Docker, health check, CI." },
-  { version: "V1", title: "Auth & organization core", status: "in-progress", detail: "Clerk auth is live; org creation and role guards are next." },
-  { version: "V2", title: "Clients & projects", status: "planned", detail: "Client CRUD, project scoping by assignment." },
-  { version: "V3", title: "Tasks & milestones", status: "planned", detail: "Kanban, list view, drag-and-drop status." },
-  { version: "V4", title: "Files & comments", status: "planned", detail: "Cloudinary uploads scoped per project." },
-  { version: "V5", title: "Activity & notifications", status: "planned", detail: "Timeline and email off one event stream." },
+  { version: "V1", title: "Auth & organization core", status: "shipped", detail: "Clerk auth, org creation, role guards, cross-org isolation tested." },
+  { version: "V2", title: "Clients & projects", status: "shipped", detail: "Client CRUD, project scoping by assignment." },
+  { version: "V3", title: "Tasks & milestones", status: "shipped", detail: "Kanban, list view, status filters." },
+  { version: "V4", title: "Files & comments", status: "in-progress", detail: "Cloudinary uploads and comment threads, scoped per project." },
+  { version: "V5", title: "Activity & notifications", status: "in-progress", detail: "Timeline and email off one event stream." },
   { version: "V6", title: "Dashboard & search", status: "planned", detail: "Real health indicators, indexed search." },
-  { version: "V7", title: "Client portal", status: "planned", detail: "Token invite, sandboxed client-facing UI." },
+  { version: "V7", title: "Client portal", status: "in-progress", detail: "Token invite, sandboxed client-facing UI." },
   { version: "V8", title: "Production polish", status: "planned", detail: "Dark mode, Sentry, Playwright, deploy." },
 ];
 
@@ -34,6 +43,9 @@ export function RoadmapSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion) return;
+
       gsap.from(".roadmap-row", {
         opacity: 0,
         x: -16,
