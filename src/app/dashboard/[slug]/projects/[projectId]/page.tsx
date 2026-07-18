@@ -7,6 +7,8 @@ import { apiFetch } from "@/lib/api";
 import { ArrowLeft } from "lucide-react";
 import { MilestonesPanel } from "@/components/dashboard/MilestonesPanel";
 import { TasksPanel } from "@/components/dashboard/TasksPanel";
+import { FilesPanel } from "@/components/dashboard/FilesPanel";
+import { CommentsPanel } from "@/components/dashboard/CommentsPanel";
 
 type Organization = {
   id: string;
@@ -118,6 +120,11 @@ export default function ProjectDetailPage({
         isAdmin={isAdmin}
       />
       <TasksPanel organizationId={org.id} projectId={project.id} />
+      <FilesPanel organizationId={org.id} projectId={project.id} />
+      {/* Project-level thread for now — the same component drops onto
+          a Task or FileAsset later just by passing taskId/fileAssetId
+          instead, no changes needed to CommentsPanel itself. */}
+      <CommentsPanel organizationId={org.id} projectId={project.id} />
     </div>
   );
 }
