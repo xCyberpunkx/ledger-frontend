@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch, ApiError } from "@/lib/api";
@@ -29,9 +30,11 @@ type Assignment = {
 export function ProjectsPanel({
   organizationId,
   isAdmin,
+  slug,
 }: {
   organizationId: string;
   isAdmin: boolean;
+  slug: string;
 }) {
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
@@ -304,6 +307,12 @@ export function ProjectsPanel({
                 <div>
                   <span className="font-medium text-ink">{p.name}</span>
                   <span className="ml-2 text-muted">{p.client.name}</span>
+                  <Link
+                    href={`/dashboard/${slug}/projects/${p.id}`}
+                    className="ml-2 text-moss hover:underline"
+                  >
+                    Open →
+                  </Link>
                 </div>
                 <div className="flex items-center gap-3">
                   {isAdmin && (

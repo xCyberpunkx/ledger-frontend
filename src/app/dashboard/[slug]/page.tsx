@@ -81,7 +81,7 @@ export default function OrgPage({ params }: { params: { slug: string } }) {
       <p className="mt-1 font-mono text-xs text-muted">{org.slug}</p>
 
       {isAdmin && <ClientsPanel organizationId={org.id} />}
-      <ProjectsPanel organizationId={org.id} isAdmin={isAdmin} />
+      <ProjectsPanel organizationId={org.id} isAdmin={isAdmin} slug={params.slug} />
       {isAdmin && <InvitePanel organizationId={org.id} />}
     </div>
   );
