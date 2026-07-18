@@ -47,6 +47,14 @@ const PRIORITY_TONE: Record<TaskPriority, string> = {
   URGENT: "text-gold font-semibold",
 };
 
+// Same rule DashboardService uses server-side for overdueTaskCount:
+// past due AND not DONE. Kept in sync deliberately — a task the
+// dashboard counts as overdue must look overdue right here too.
+function isOverdue(task: Pick<Task, "dueDate" | "status">): boolean {
+  if (!task.dueDate || task.status === "DONE") return false;
+  return new Date(task.dueDate) < new Date();
+}
+
 export function TasksPanel({
   organizationId,
   projectId,
@@ -495,8 +503,15 @@ export function TasksPanel({
                     <span className="text-muted">{t.assignee.user.name}</span>
                   )}
                   {t.dueDate && (
-                    <span className="text-muted">
+                    <span
+                      className={
+                        isOverdue(t)
+                          ? "font-semibold text-gold"
+                          : "text-muted"
+                      }
+                    >
                       {new Date(t.dueDate).toLocaleDateString()}
+                      {isOverdue(t) && " · Overdue"}
                     </span>
                   )}
                 </div>
